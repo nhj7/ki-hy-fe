@@ -24,7 +24,7 @@
             <!--v-icon class="float-right">mdi-close</v-icon-->
           </v-list-item-title>
           <v-list-item-subtitle class="primary--text">
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 한국투자 서비스 품질 관리 시스템
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{systemName}}
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -1001,7 +1001,8 @@ const data = {
   miniVariant: false,
   right: true,
   rightDrawer: false,
-  title: "KI-SQM",
+  title: Vue.prototype.$config.systemName,
+  systemName: Vue.prototype.$config.systemNameKo,
   groupStates: [true, true],
   alarmCount: 0,
   alarms: [],
@@ -1151,8 +1152,8 @@ const comp = (module.exports = {
     //console.log("App.vue mounted", Object.keys(this.$options.components));
 
     this.drawer = window.innerWidth >= 1264; // Vuetify의 lg 브레이크포인트
-    await this.alarmSearch();
-    this.alarmInterval = setInterval(this.alarmSearch, 30 * 1000);
+    //await this.alarmSearch();
+    //this.alarmInterval = setInterval(this.alarmSearch, 30 * 1000);
   },
   components: {
     "alarm-popup": loadVue("/component/AlarmPopup"),

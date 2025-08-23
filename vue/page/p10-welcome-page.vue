@@ -2,11 +2,11 @@
     <v-container fluid>
         <v-row>
             <v-col cols="12">
-                <h2 class="text-center mb-6">한국투자 IT 서비스 품질 관리 시스템에 오신 것을 환영합니다.</h2>
+                <h2 class="text-center mb-6">{{$config.systemNameKo + '(' + $config.systemName + ')'}}에 오신 것을 환영합니다.</h2>
             </v-col>
         </v-row>
         <v-row>
-            <v-col v-for="(page, index) in this.$router.options.routes.filter(
+            <v-col v-for="(page, index) in $router.options.routes.filter(
             (route) => route.meta && route.meta.showInMenu && !route.meta.hideInWelcom)" :key="index" cols="12" sm="6" md="4" 
             
             >

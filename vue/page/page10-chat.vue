@@ -1,129 +1,113 @@
 <template>
-<v-container fluid>
-    <v-row>
-    <v-col cols="12">
-        <v-card>
-        <v-card-title>
-            대화로 금융 보고서를 작성해보세요.
-        </v-card-title>
+    <v-container fluid class="fill-height">
+        <v-row justify="center" class="fill-height">
+            <v-col cols="12" sm="10" md="8" lg="6">
+                <!-- 메인 타이틀 -->
+                <v-row v-if="isTitle" justify="center" style="margin-top: 20vh;" class="mb-12">
+                    <v-col cols="12" class="text-center">
+                        <h1 class="text-h3 text-md-h2 font-weight-regular grey--text text--darken-3">
+                            무엇을 도와드릴까요?
+                        </h1>
+                    </v-col>
+                </v-row>
 
-        <v-card-text>
-            <div class="chat-container">
-            <v-list dense>
-                <v-list-item
-                v-for="(message, index) in messages"
-                :key="index"
-                :class="{'sent': message.sent, 'received': !message.sent}"
-                >
-                <v-list-item-content v-if="message.sent">
-                    <v-list-item-title>{{ message.text }}</v-list-item-title>
-                </v-list-item-content>
-
-                <v-list-item-content v-else>
-                    <v-row>
-                        <v-col cols="auto">
-                            <v-img src="/assets/ci.png" :width="30" cover />
-                        </v-col>
-                        <v-col>
-                            <v-list-item-title>{{ message.text }}</v-list-item-title>
+                <!-- 응답 영역 -->
+                <v-expand-transition>
+                    <v-row v-if="response" justify="center" class="mt-6">
+                        <v-col cols="12">
+                            <v-card elevation="2" rounded="lg">
+                                <v-card-text>
+                                    <p class="mb-0 body-1" v-html="response"></p>
+                                </v-card-text>
+                            </v-card>
                         </v-col>
                     </v-row>
-                    
-                    
-                </v-list-item-content>
-                </v-list-item>
-            </v-list>
-            </div>
-        </v-card-text>
+                </v-expand-transition>
 
-        <v-divider></v-divider>
 
-        <v-card-actions>
-            <v-row no-gutters>
-                <v-col>
-                    <v-text-field
-                    v-model="inputMessage"
-                    label="Type your message..."
-                    @keyup.enter="sendMessage"
-                    dense
-                    outlined
-                    full-width
-                    ></v-text-field>
-                </v-col>
-                <v-col cols="auto">
-                    <v-btn color="primary" @click="sendMessage">Send</v-btn>
-                </v-col>                    
-            </v-row>
-        </v-card-actions>
-        </v-card>
-    </v-col>
-    </v-row>
-</v-container>
+                <!-- 입력 필드 -->
+                <v-row justify="center">
+                    <v-col cols="12">
+                        <v-textarea v-model="inputText" placeholder="무엇이든 물어보세요" outlined rounded solo hide-details
+                            elevation="2" @keydown.enter.prevent="handleSubmit" auto-grow rows="1" row-height="24">
+                            <template v-slot:prepend-inner>
+                                
+                            </template>
+
+                            <template v-slot:append>
+                                <v-btn color="secondary" elevation="1" rounded @click="handleSubmit" :disabled="!inputText.trim()">
+                                    전송
+                                </v-btn>
+                            </template>
+                        </v-textarea>
+                    </v-col>
+                </v-row>
+
+                
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script>
-const comp = module.exports = {
+const renderer = new marked.Renderer();
+renderer.link = function (link) {
+    return `<a href="${link.href}" title="${link.text}" target="_blank">${link.text}</a>`;
+};
+// marked 옵션에 렌더러 적용
+marked.setOptions({
+    renderer: renderer,
+});
+module.exports = {
+    name: 'MainLayout',
     data() {
         return {
-            inputMessage: ''
-            , messages: [
-                { text: '안녕하세요. 필요한 보고서가 무엇인가요? 예) 최근 일주일 간의 대출 실적 리스트를 만들어줘. 고객명, 대출일자, 대출금액 항목이 필요해.', sent: false },
-                { text: '사용자 입력 메세지', sent: true },
-            ]
-            , "data":"나현준, 나예준"
+            inputText: '',
+            response: '',
+            isTitle : true,
         }
-    }
-    , methods : {
-        sendMessage() {
-            if (this.inputMessage.trim() !== '') {
-                // Add the user's message to the messages array
-                this.messages.push({ text: this.inputMessage, sent: true });
-                
-                // Clear the input field
-                this.inputMessage = '';
+    },
+    computed: {
+        micIcon() {
+            return this.isMicActive ? 'mdi-microphone' : 'mdi-microphone-outline'
+        },
+        soundIcon() {
+            return this.isSoundActive ? 'mdi-volume-high' : 'mdi-equalizer'
+        }
+    },
+    methods: {
+        async handleSubmit() {
+            this.isTitle = false;
+            if (this.inputText.trim()) {
+                this.response = `"${this.inputText}"에 대한 답변을 준비하고 있습니다...`
+                this.$loading.show('답변을 준비하고 있습니다...');
+                const response = await this.$axios.post('http://114.207.145.84:8000/chat', {
+                    prompt: this.inputText + ". 한글로 답변해줘."
+                });
 
-                this.$loading.show("보고서 응답을 준비 중입니다");
+                console.log(response);
 
-                // Simulate a bot response (you can replace this with an API call)
-                setTimeout(() => {
-                    this.messages.push({
-                        text: '가상의 보고서 응답입니다. 다운로드 링크',
-                        sent: false,
+                this.response = marked.parse(response.data.response);
+                this.$nextTick(() => {                    
+                    // 모든 pre code 블록에 highlight 적용
+                    this.$el.querySelectorAll('pre code').forEach((block) => {
+                        console.log('block',block);
+                        hljs.highlightElement(block);
                     });
+                });
+                this.inputText = ''
 
-                    this.$loading.hide();
-                }, 1000);
+                this.$loading.hide();
             }
         },
-    } // methods
-}
+        toggleMic() {
+            this.isMicActive = !this.isMicActive
+            // 음성 인식 로직
+        },
+        toggleSound() {
+            this.isSoundActive = !this.isSoundActive
+            // 음성 출력 로직
+        }
+    }
+} 
 </script>
-<style scoped>
-.chat-container {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.sent {
-  text-align: right;
-  border-radius : 1.5em;
-  background-color:whitesmoke;
-  margin-bottom : 0.25em;
-}
-
-.theme--dark .sent{
-    background-color:darkgray;
-}
-
-.received {
-  text-align: left;
-}
-
-v-list-item {
-  margin-bottom: 10px;
-}
-
-.custom-table {
-    border-top: 2px solid var(--v-primary-lighten3);
-}
-</style>
