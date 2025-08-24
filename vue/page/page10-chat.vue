@@ -77,11 +77,13 @@ module.exports = {
     },
     methods: {
         async handleSubmit() {
+            let isHTTPS = location.protocol === 'https:';
+            //isHTTPS = true;
             this.isTitle = false;
             if (this.inputText.trim()) {
                 this.response = `"${this.inputText}"에 대한 답변을 준비하고 있습니다...`
                 this.$loading.show('답변을 준비하고 있습니다...');
-                const response = await this.$axios.post('http://114.207.145.84:8000/chat', {
+                const response = await this.$axios.post(`${isHTTPS?'https://cors.iinfo.kr:7403/':''}http://114.207.145.84:8000/chat`, {
                     prompt: this.inputText + ". 한글로 답변해줘."
                 });
 
