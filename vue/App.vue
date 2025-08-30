@@ -124,12 +124,36 @@
           <v-icon>mdi-bell{{this.alarmPopupVisible ? '' : '-outline'}}</v-icon>
         </v-badge>
       </v-btn-->
-      <v-btn icon @click="toggleDarkTheme">
-        <v-icon>{{ themeIcon }}</v-icon>
-      </v-btn>
+      <v-menu offset-y>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn icon v-bind="attrs" v-on="on">
+            <v-icon :color="themeIcon[themeName].color">{{ themeIcon[themeName].icon }}</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item @click="changeTheme('light')">
+            <v-list-item-icon>
+              <v-icon :color="themeIcon['light'].color">{{themeIcon['light'].icon}}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Light</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="changeTheme('dark')">
+            <v-list-item-icon>
+              <v-icon :color="themeIcon['dark'].color">{{themeIcon['dark'].icon}}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Dark</v-list-item-title>
+          </v-list-item>          
+          <v-list-item @click="changeTheme('sunset')">
+            <v-list-item-icon>
+              <v-icon :color="themeIcon['sunset'].color">{{themeIcon['sunset'].icon}}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Sunset</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-app-bar>
 
-    <alarm-popup v-model="alarmPopupVisible" :alarms="alarms"></alarm-popup>
+    
 
     <v-main>
       <v-container fluid class="pt-0">
@@ -518,7 +542,7 @@
 
         <v-divider></v-divider>
 
-        <v-list-item @click="toggleDarkTheme">
+        <v-list-item >
           <v-list-item-action>
             <v-icon>
               {{ isDark ? "mdi-lightbulb-off" : "mdi-lightbulb-on" }}
@@ -623,6 +647,7 @@ const MessagePlugin = {
         snackbarColor: 'success',
         snackbarText: '',
         snackbarTimeout: 1000,
+        
       },
       methods: {
         show(options = {}) {
@@ -1014,6 +1039,22 @@ const data = {
   snackbarColor: 'success',
   snackbarText: '',
   alarmInterval: null,
+  themeName : 'light'
+  ,themeIcon : {
+    light : {
+      icon : 'mdi-weather-sunny'
+      , color : 'yellow darken-2'
+    }
+    , dark : {
+      icon : 'mdi-weather-night'
+      , color : 'blue-grey'
+    }
+    , sunset : {
+      icon : 'mdi-weather-sunset-down'
+      , color : 'orange darken-2'
+    }
+  }
+  
 };
 
 const comp = (module.exports = {
@@ -1022,9 +1063,7 @@ const comp = (module.exports = {
     return data;
   }, // end data
   computed: {
-    themeIcon() {
-      return this.isDark ? "mdi-weather-night" : "mdi-weather-sunny";
-    },
+    
   },
   watch: {
 
@@ -1042,18 +1081,35 @@ const comp = (module.exports = {
       this.$session.clear();
       this.$router.push("/login");
     },
-    toggleDarkTheme() {
-      data.isDark = !data.isDark;
-      this.$vuetify.theme.dark = data.isDark;
-      //console.log('toggleDarkTheme', this.$vuetify.theme.dark);
-      localStorage.setItem("darkTheme", this.isDark);
+    changeTheme(themeName) {
+      this.themeName = themeName;
+      const isDark = themeName === 'dark';
+      this.$vuetify.theme.dark = isDark;
 
-      if (data.isDark) {
-        document.body.style.backgroundColor = '#1e1e1e';
+      // window.originalThemes에서 원본 테마 설정을 가져옵니다.
+      const newThemeColors = window.originalThemes[themeName];
+
+      console.log('changeTheme',themeName,  newThemeColors);
+
+      if (themeName === 'dark') {
+          this.$vuetify.theme.dark = true;
       } else {
-        document.body.style.backgroundColor = '#fff';
+          this.$vuetify.theme.dark = false;
+          // light 테마에 새로운 색상 적용
+          
+          Object.assign(this.$vuetify.theme.themes.light, newThemeColors);
+          
       }
-      this.updateScrollbarColor(data.isDark);
+      
+      // 다크 테마는 vuetify.theme.dark = true로 설정하면 자동으로 적용됩니다.
+
+      data.isDark = isDark;
+      localStorage.setItem("theme", themeName);
+
+      document.body.style.backgroundColor = isDark ? '#1e1e1e' : '#fff';
+      this.updateScrollbarColor(isDark);
+      
+      
     },
     findRouteByPath(path) {
       return this.$router.options.routes.find((route) => route.path === path);
@@ -1156,8 +1212,7 @@ const comp = (module.exports = {
     //this.alarmInterval = setInterval(this.alarmSearch, 30 * 1000);
   },
   components: {
-    "alarm-popup": loadVue("/component/AlarmPopup"),
-    "account-settings": loadVue("/component/AccountSettings"),
+    
   },
   beforeDestroy() {
     clearInterval(this.alarmInterval);
@@ -1179,19 +1234,8 @@ const comp = (module.exports = {
     //this.$router.addRoutes(router);
 
     { // ===== 테마 설정 =====
-      const savedTheme = localStorage.getItem("darkTheme");
-      console.log('savedTheme : ', savedTheme);
-      if( savedTheme == undefined) {
-        console.log('savedTheme undefined : ', savedTheme);
-        this.toggleDarkTheme();
-      }
-
-      if (savedTheme !== null) {        
-        const parsedTheme = JSON.parse(savedTheme);
-        if (this.isDark !== parsedTheme) {
-          this.toggleDarkTheme();
-        }
-      }
+      const savedTheme = localStorage.getItem("theme") || 'light';
+      this.changeTheme(savedTheme);
     } // end 테마 설정
 
 
@@ -1358,15 +1402,15 @@ Vue.prototype.$util = globalMethods;
 }
 
 .theme--dark .v-list-item--active {
-  color: rgb(33, 150, 243);
+  /*color: rgb(33, 150, 243);*/
   /* color: burlywood; */
-  /* color : rgb(var(--v-primary-lighten1)); */
+  color: var(--v-primary-base, #1976D2) !important;
 }
 
 .theme--light .v-list-item--active {
-  color: rgb(33, 150, 243);
+  /*color: rgb(33, 150, 243);*/
   /* color : #5E35B1; */
-  /* color : rgb(var(--v-primary-lighten1)); */
+  color: var(--v-primary-base, #1976D2) !important;
 }
 
 .pa-0 {

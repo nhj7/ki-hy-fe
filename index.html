@@ -150,7 +150,7 @@
                         , secondary: "#424242"
                         , success: "#4CAF50"
                         , warning: "#FB8C00"
-                        , skyBlue: '#4FC3F7',  // 연한 하늘색
+                        
                     }, dark: {
                         accent: "#FF4081"
                         , error: "#FF5252"
@@ -179,6 +179,18 @@
                         info: '#0288d1', // 파란색 계열
                         success: '#2e7d32', // 초록색 계열
                         warning: '#f57c00', // 오렌지색 계열
+                        grey: {
+                            base: '#9E9E9E',
+                            lighten5: '#FAFAFA',
+                            lighten4: '#F5F5F5',
+                            lighten3: '#EEEEEE',
+                            lighten2: '#E0E0E0',
+                            lighten1: '#BDBDBD',
+                            darken1: '#757575',
+                            darken2: '#616161',
+                            darken3: '#424242',
+                            darken4: '#212121',
+                        }
                     }, sunset: {
                         primary: '#ff7043', // 주황색 계열
                         secondary: '#ffccbc', // 밝은 주황색
@@ -187,11 +199,24 @@
                         info: '#ffb74d', // 노란색 계열
                         success: '#66bb6a', // 초록색 계열
                         warning: '#ffa726', // 노란 주황색
+                        grey: {
+                            base: '#9E9E9E',
+                            lighten5: '#FAFAFA',
+                            lighten4: '#F5F5F5',
+                            lighten3: '#EEEEEE',
+                            lighten2: '#E0E0E0',
+                            lighten1: '#BDBDBD',
+                            darken1: '#757575',
+                            darken2: '#616161',
+                            darken3: '#424242',
+                            darken4: '#212121',
+                        }
                     },
                 }
             },
 
         };
+        window.originalThemes = JSON.parse(JSON.stringify(vuetifyOptions.theme.themes));
         const vuetify = new Vuetify(vuetifyOptions);
 
         Vue.mixin({
@@ -222,17 +247,6 @@
 
         // 믹스인 전역 등록
         Vue.mixin(denseMixin);
-
-
-        vuetify.framework.theme.themes.ocean = {
-            primary: '#0277bd', // 파란색 계열                        
-            secondary: '#26c6da', // 밝은 파란색
-            accent: '#00acc1', // 청록색 계열
-            error: '#c62828', // 어두운 빨간색
-            info: '#0288d1', // 파란색 계열
-            success: '#2e7d32', // 초록색 계열
-            warning: '#f57c00', // 오렌지색 계열
-        }
 
         const Home = { component: loadVue('./page/p10-welcome-page') }
 
@@ -294,7 +308,7 @@
 
                 , {
                     path: '#', name: 'sample', meta: {
-                        showInMenu: true,
+                        showInMenu: false,
                         icon: "mdi-view-dashboard-outline",
                         title: "샘플 페이지",
                         isGroupOpen: false,
@@ -387,106 +401,34 @@
         });
 
 
-        function fnIsLoggedIn() {
-            return Vue.prototype.$session.userId != null;
-            //return true;
-        }
         
 
-        // 로그인 상태를 체크하는 함수
-        async function checkLoginStatus() {
-
-            console.log('현재 주소:', window.location.href);
-            const currentHash = window.location.hash.substring(1);
-            console.log('현재 해시 주소:', currentHash);
-            const accessToken = localStorage.getItem("accessToken");
-            const refreshToken = localStorage.getItem("refreshToken");
-            if (accessToken && refreshToken) {
-                try {
-                    const response = await axios.post("/api/login-check", { accessToken, refreshToken });
-                    if (response?.data?.header?.resultCode === "0000") {
-                        localStorage.setItem("accessToken", response.data.body.accessToken);
-                        localStorage.setItem("refreshToken", response.data.body.refreshToken);
-                        return {
-                            isLoggedIn: true,
-                            userData: response.data.body,
-                            redirectUrl: currentHash
-                        };
-                    }
-                } catch (error) {
-                    console.error("Login check failed:", error);
-                }
-            }
-            return { isLoggedIn: true , redirectUrl: currentHash};
-        }
-
-        // 로그인 상태 체크 후 Vue 인스턴스 생성
-        checkLoginStatus().then(({ isLoggedIn, userData, redirectUrl }) => {
-
-            if(!isLoggedIn){
-                // 전역 네비게이션 가드 추가
-                router.beforeEach((to, from, next) => {
+        const app = new Vue({
+            el: '#app',
+            vuetify,
+            router,
+            data() {
+                return {
+                    currentView: '',
+                    message: '@nhj12311',
+                    data1: 'data22',                    
                     
-                    console.log('beforeEach', to, from, next);
-                    if(to.path == '/login'){
-                        next();
-                    }
-                    // 이 라우트는 인증이 필요하며 로그인 여부를 확인합니다.
-                    else if (!fnIsLoggedIn()) {
-                        // 로그인하지 않은 경우 로그인 페이지로 리다이렉션합니다.
-                        next({
-                            path: '/login',
-                            query: { redirect: to.fullPath }
-                        });
-                    } else {
-                        next();
-                    }            
-                });
+                };
+            },
+            components: {
+                'App': loadVue('App')
+            },
+            methods: {
+                
+            },
+            created() {
+                
+            },
+            mounted() {
+                // ... 기존 mounted 로직 ...
             }
-
-            const app = new Vue({
-                el: '#app',
-                vuetify,
-                router,
-                data() {
-                    return {
-                        currentView: '',
-                        message: '@nhj12311',
-                        data1: 'data22',
-                        isLoggedIn,
-                        userData
-                    };
-                },
-                components: {
-                    'App': loadVue('App')
-                },
-                methods: {
-                    changeTheme(themeName) {
-                        this.$vuetify.theme.themes.light = this.$vuetify.theme.themes[themeName];
-                        this.$vuetify.theme.dark = false;
-                    },
-                },
-                created() {
-                    if (this.isLoggedIn) {
-                        Object.assign(this.$session, this.userData);
-
-                        console.log("this.$route.path", this.$route.path);
-                        // 현재 경로가 루트("/") 또는 "/login"인 경우 대시보드로 리다이렉트
-                        if (["/", "/login"].includes(this.$route.path)) {
-                            this.$router.push("/");
-                        }
-                        if(redirectUrl){
-                            this.$router.push(redirectUrl);
-                        }
-                    } else if (this.$route.path !== "/login") {
-                        this.$router.push("/login");
-                    }
-                },
-                mounted() {
-                    // ... 기존 mounted 로직 ...
-                }
-            });
         });
+        
 
         
 

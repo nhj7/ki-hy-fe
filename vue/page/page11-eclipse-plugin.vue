@@ -166,7 +166,7 @@
                     </v-col>
                 </v-row>
 
-                <!-- 주요 기능 안내 -->
+                <!-- 주요 기능 안내 >
                 <v-row justify="center" class="mb-6">
                     <v-col cols="12" md="8">
                         <v-card elevation="3" rounded="lg">
@@ -220,7 +220,7 @@
                             </v-card-text>
                         </v-card>
                     </v-col>
-                </v-row>
+                </v-row-->
 
                 <!-- 문의 및 지원 -->
                 <v-row justify="center">
