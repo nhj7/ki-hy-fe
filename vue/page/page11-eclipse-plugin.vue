@@ -1,7 +1,7 @@
 <template>
     <v-container fluid class="fill-height">
         <v-row justify="center" class="fill-height">
-            <v-col cols="12" sm="12" md="10" lg="8">
+            <v-col cols="12" sm="12" md="10" lg="10">
                 <!-- 메인 타이틀 -->
                 <v-row justify="center" class="mb-8">
                     <v-col cols="12" class="text-center">
