@@ -249,33 +249,15 @@
                         description: '실시간으로 서비스 트랜잭션을 모니터링하고 분석합니다. 거래량, 오류율, 처리 시간 등을 한눈에 확인할 수 있습니다.'
                     }
                 }
-                
-                
-
                 , {
-                    path: '/user-management', name: 'user-management', component: loadVue('./page/p6-user-management'), meta: {
+                    path: '/eclipse-plugin', name: 'eclipse-plugin', component: loadVue('./page/page11-eclipse-plugin'), meta: {
                         showInMenu: true,
-                        icon: "mdi-account-multiple",
-                        iconColor: "purple",
-                        title: "사용자 관리",
-                        description: '사용자 관리를 위한 설정을 할 수 있습니다. 사용자 이름, 설명, 상태 등을 관리할 수 있습니다.'
+                        icon: "mdi-puzzle",
+                        iconColor: "blue",
+                        title: "Eclipse Plugin 다운로드",
+                        description: 'KI Assist 기능을 이클립스에서 사용할 수 있는 플러그인을 다운로드하고 설치할 수 있습니다.'
                     }
                 }
-
-                , {
-                    path: '/api-list', name: 'api-list', component: loadVue('./page/p5-api-list'), meta: {
-                        showInMenu: true,
-                        icon: "mdi-dev-to",
-                        iconColor: "purple",
-                        title: "API 명세",
-                        description: '시스템에서 제공하는 API 목록과 상세 명세를 확인할 수 있습니다. API 테스트도 가능합니다.'
-                    }
-                }
-
-
-                
-
-                
                 , {
                     path: '/login', name: 'login', component: loadVue('./page/p0-login'), meta: {
                         showInMenu: false,
@@ -316,6 +298,7 @@
                         icon: "mdi-view-dashboard-outline",
                         title: "샘플 페이지",
                         isGroupOpen: false,
+                        hideInWelcom : true
                     }, subRoutes: [
                         {
                             path: '/login'

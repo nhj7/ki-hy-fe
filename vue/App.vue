@@ -96,7 +96,7 @@
       <!--v-btn icon @click.stop="rightDrawer = !rightDrawer">
                         <v-icon>mdi-cog</v-icon>
                     </v-btn-->
-      <v-menu offset-y v-if="$session.userName">
+      <!--v-menu offset-y v-if="$session.userName">
         <template v-slot:activator="{ on, attrs }">
           <v-btn text v-bind="attrs" v-on="on">
             <v-icon>mdi-account-circle</v-icon>
@@ -111,19 +111,19 @@
             <v-list-item-title>로그아웃</v-list-item-title>
           </v-list-item>
         </v-list>
-      </v-menu>
+      </v-menu-->
 
-      <account-settings v-model="accountSettingsVisible"></account-settings>
+      <!--account-settings v-model="accountSettingsVisible"></account-settings-->
 
-      <v-btn text @click="logout">
+      <!--v-btn text @click="logout">
         <v-icon>{{ $session.userName ? "mdi-logout" : "mdi-login" }}</v-icon>
         {{ $session.userName ? "로그아웃" : "로그인" }}
-      </v-btn>
-      <v-btn icon @click="showAlarmPopup">
+      </v-btn-->
+      <!--v-btn icon @click="showAlarmPopup">
         <v-badge :content="alarmCount" :value="alarmCount > 0" color="error" overlap>
           <v-icon>mdi-bell{{this.alarmPopupVisible ? '' : '-outline'}}</v-icon>
         </v-badge>
-      </v-btn>
+      </v-btn-->
       <v-btn icon @click="toggleDarkTheme">
         <v-icon>{{ themeIcon }}</v-icon>
       </v-btn>
