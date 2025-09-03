@@ -197,7 +197,7 @@
 
 /* 채팅 기록 목록 */
 .chat-history-list {
-    height: calc(100vh - 600px);
+    height: calc(100vh - 300px);
     overflow-y: auto;
 }
 
