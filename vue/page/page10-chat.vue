@@ -199,12 +199,13 @@
 .chat-history-list {
     height: calc(100vh - 300px);
     overflow-y: auto;
+    font-size: 0.9rem !important;
 }
 
 .chat-item {
-    border-radius: 8px;
-    margin: 4px 8px;
+    border-radius: 8px;    
     transition: background-color 0.2s;
+    padding : 0 8px !important;
 }
 
 .chat-item:hover {
