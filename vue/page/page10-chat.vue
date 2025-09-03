@@ -59,7 +59,7 @@
                     <v-card-text class="flex-grow-1 chat-messages pa-3" style="overflow-y: auto;">
                         <!-- 메인 타이틀 (첫 화면) -->
                         <div v-if="isTitle" class="text-center" style="margin-top: 30vh;">
-                            <h1 class="text-h3 text-md-h2 font-weight-regular grey--text text--darken-3">
+                            <h1 class="text-h4 text-md-h4 font-weight-regular grey--text text--darken-3">
                                 무엇을 도와드릴까요?
                             </h1>
                         </div>

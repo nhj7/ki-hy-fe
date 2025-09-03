@@ -85,13 +85,13 @@
     <v-app-bar :clipped-left="clipped" fixed app flat class="app-bar-with-border">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <!--v-img src="/assets/ci4.jpg" :width="150" @click.stop="drawer = !drawer" /-->
-      <router-link to="/" class="text-decoration-none">
-        <v-toolbar-title class="text-h6 cursor-pointer d-flex align-center flex-row">
+      
+        <v-toolbar-title class="text-h6 cursor-pointer d-flex align-center flex-row" @click.stop="drawer = !drawer">
           <v-img v-if="isDark" src="/assets/ci0_bright.png" :width="100" cover style="top: -7px;"></v-img>
           <v-img v-else src="/assets/ci0.png" :width="100" cover style="top: -7px;"></v-img>
           <span>한국투자</span>
         </v-toolbar-title>
-      </router-link>
+      
       <v-spacer></v-spacer>
       <!--v-btn icon @click.stop="rightDrawer = !rightDrawer">
                         <v-icon>mdi-cog</v-icon>
@@ -163,7 +163,7 @@
             <v-icon size="24" :color="this.$route.meta.iconColor || 'primary'" class="mr-2">
               {{ this.$route.meta.icon }}
             </v-icon>
-            {{ this.$route.meta.title }}
+            <div>{{ this.$route.meta.title }}</div>
           </h2>
           <div class="d-flex flex-nowrap">
             <v-btn icon @click="$router.go(-1)">
