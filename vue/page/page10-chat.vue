@@ -444,7 +444,7 @@ module.exports = {
         async handleSubmit() {
             let isHTTPS = location.protocol === 'https:';
             this.isTitle = false;
-            
+            const postFix = "한글로 답변해줘.";
             if (this.inputText.trim()) {
                 const userQuestion = this.inputText;
                 
@@ -483,14 +483,14 @@ module.exports = {
 
                 try {
                     const response = await this.$axios.post(`${isHTTPS?'https://cors.iinfo.kr:7403/':''}http://114.207.145.84:8000/chat`, {
-                        prompt: userQuestion + ". 한글로 답변해줘."
+                        prompt: userQuestion + ". " + postFix
                     });
 
                     console.log(response);
                     let assistantResponse = response.data.response;
                     
                     // 응답에서 질문 부분 제거
-                    const questionPrefix = `${userQuestion}. 한글로 답변해줘.`;
+                    const questionPrefix = `${userQuestion}. ${postFix}`;
                     if (assistantResponse.startsWith(questionPrefix)) {
                         assistantResponse = assistantResponse.substring(questionPrefix.length).trim();
                     }
