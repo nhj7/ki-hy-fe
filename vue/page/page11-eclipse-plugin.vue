@@ -46,7 +46,7 @@
                                             <v-icon color="primary">mdi-application-settings</v-icon>
                                         </v-list-item-icon>
                                         <v-list-item-content>
-                                            <v-list-item-title><strong>지원 버전:</strong> Eclipse 2023-12 이상</v-list-item-title>
+                                            <v-list-item-title><strong>지원 버전:</strong> Eclipse Indigo 2011-06 이상</v-list-item-title>
                                         </v-list-item-content>
                                     </v-list-item>
                                     <v-list-item>
@@ -54,7 +54,7 @@
                                             <v-icon color="primary">mdi-folder-zip</v-icon>
                                         </v-list-item-icon>
                                         <v-list-item-content>
-                                            <v-list-item-title><strong>파일 크기:</strong> 약 2.5MB</v-list-item-title>
+                                            <v-list-item-title><strong>파일 크기:</strong> 약 1.MB 이하</v-list-item-title>
                                         </v-list-item-content>
                                     </v-list-item>
                                 </v-list>
